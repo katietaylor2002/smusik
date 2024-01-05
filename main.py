@@ -2,7 +2,6 @@ import spotipy.util as util
 import spotipy
 import json
 from types import SimpleNamespace
-import time
 import pygame
 from player import Player
 from beat import Beat
@@ -12,8 +11,8 @@ def start_beat_game():
 
     # Initialising screen size
     WIDTH = 800
-    HEIGHT = 600
-    beat_countdown = 2000
+    HEIGHT = 1000
+    beat_countdown = get_currently_listening()
 
     # Set up game
     pygame.init()
@@ -22,8 +21,9 @@ def start_beat_game():
     clock = pygame.time.Clock()
 
     # Set up the beat_list
+    current_beat = 0
     ADD_BEAT = pygame.USEREVENT + 1
-    pygame.time.set_timer(ADD_BEAT, beat_countdown)
+    pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
     beat_list = pygame.sprite.Group()
 
     # Set up the player
@@ -43,18 +43,20 @@ def start_beat_game():
             if event.type == pygame.QUIT:
                 running = False
 
-            # Should you add a new beat?
             elif event.type == ADD_BEAT:
+                if beat_countdown[current_beat].confidence < confidence_threshold():
+                    current_beat += 1
+                else:
+                    # Create a new beat
+                    new_beat = Beat()
+                    beat_list.add(new_beat)
 
-                # Create a new beat
-                new_beat = Beat()
-                beat_list.add(new_beat)
+                    # Stop the previous timer by setting the interval to 0
+                    pygame.time.set_timer(ADD_BEAT, 0)
 
-                # Stop the previous timer by setting the interval to 0
-                pygame.time.set_timer(ADD_BEAT, 0)
-
-                # Start a new timer
-                pygame.time.set_timer(ADD_BEAT, beat_countdown)
+                    # Start a new timer
+                    current_beat += 1
+                    pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
 
         # Update the player position
         player.update(pygame.mouse.get_pos())
@@ -69,6 +71,7 @@ def start_beat_game():
 
         # To render the screen, first fill the background with pink
         screen.fill((255, 170, 164))
+        pygame.draw.line(screen, (255, 0, 0), (0, 700), (800, 700), 2)
 
         # Draw the beats next
         for beat in beat_list:
@@ -101,6 +104,9 @@ def start_beat_game():
 def get_average_track_confidence():
     pass
 
+def confidence_threshold():
+    return 0.5
+
 
 def get_currently_listening():
     username = "katietaylor150"
@@ -116,19 +122,11 @@ def get_currently_listening():
 
     x = json.loads(analysis, object_hook=lambda d: SimpleNamespace(**d))
 
-    duration = x.track.duration
-    currentBeat = 0
-    startTime = time.time()
-    currentTime = startTime
+    return x.beats
 
-    while currentTime - startTime < duration and x.beats[currentBeat]:
-        currentTime = time.time()
-        if x.beats[currentBeat].confidence < 0.6:
-            currentBeat += 1
-        elif currentTime - startTime >= x.beats[currentBeat].start:
-            print("BEAT: " + str(x.beats[currentBeat].start))
-            currentBeat += 1
+
 
 
 if __name__ == '__main__':
+    get_currently_listening()
     start_beat_game()

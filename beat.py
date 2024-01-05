@@ -1,5 +1,5 @@
 from pathlib import Path
-from random import randint
+import random
 
 import pygame
 
@@ -12,11 +12,11 @@ class Beat(pygame.sprite.Sprite):
 
         self.surf = pygame.image.load(beat_image).convert_alpha()
 
-        randomStart = randint(10, 700)
+        randomStart = random.choice([100, 300, 500, 700])
         self.rect = self.surf.get_rect(
             center=(
                 randomStart,
-                50,
+                150,
             )
         )
 

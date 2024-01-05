@@ -20,4 +20,4 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, pos: Tuple):
         (x, _) = pos
-        self.rect.center = (x, 450)
+        self.rect.center = (x, 700)
