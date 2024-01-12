@@ -42,7 +42,31 @@ def start_beat_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    print("left")
+                    for beat in beat_list:
+                        if beat.direction == "left" and 600 < beat.rect.top < 700:
+                            beat.kill()
+                            score += 10
+                elif event.key == pygame.K_UP:
+                    print("up")
+                    for beat in beat_list:
+                        if beat.direction == "up" and 600 < beat.rect.top < 700:
+                            beat.kill()
+                            score += 10
+                elif event.key == pygame.K_DOWN:
+                    print("down")
+                    for beat in beat_list:
+                        if beat.direction == "down" and 600 < beat.rect.top < 700:
+                            beat.kill()
+                            score += 10
+                elif event.key == pygame.K_RIGHT:
+                    print("right")
+                    for beat in beat_list:
+                        if beat.direction == "right" and 600 < beat.rect.top < 700:
+                            beat.kill()
+                            score += 10
             elif event.type == ADD_BEAT:
                 if beat_countdown[current_beat].confidence < confidence_threshold():
                     current_beat += 1
@@ -58,20 +82,13 @@ def start_beat_game():
                     current_beat += 1
                     pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
 
-        # Update the player position
-        player.update(pygame.mouse.get_pos())
-
-        # Check if the player has collided with a beat, removing the beat if so
-        beats_collected = pygame.sprite.spritecollide(
-            sprite=player, group=beat_list, dokill=True
-        )
-
-        for beat in beats_collected:
-            score += 10
-
         # To render the screen, first fill the background with pink
         screen.fill((255, 170, 164))
         pygame.draw.line(screen, (255, 0, 0), (0, 700), (800, 700), 2)
+        pygame.draw.line(screen, (255, 0, 0), (100, 0), (100, 1000), 2)
+        pygame.draw.line(screen, (255, 0, 0), (300, 0), (300, 1000), 2)
+        pygame.draw.line(screen, (255, 0, 0), (500, 0), (500, 1000), 2)
+        pygame.draw.line(screen, (255, 0, 0), (700, 0), (700, 1000), 2)
 
         # Draw the beats next
         for beat in beat_list:

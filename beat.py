@@ -8,11 +8,26 @@ class Beat(pygame.sprite.Sprite):
     def __init__(self):
         super(Beat, self).__init__()
 
-        beat_image = str(Path.cwd() / "pygame" / "images" / "coin_gold.png")
-
-        self.surf = pygame.image.load(beat_image).convert_alpha()
+        up_image = str(Path.cwd() / "pygame" / "images" / "up.jpg")
+        down_image = str(Path.cwd() / "pygame" / "images" / "down.png")
+        left_image = str(Path.cwd() / "pygame" / "images" / "left.jpg")
+        right_image = str(Path.cwd() / "pygame" / "images" / "right.jpg")
 
         randomStart = random.choice([100, 300, 500, 700])
+
+        if randomStart == 100:
+            self.direction = "left"
+            self.surf = pygame.image.load(left_image).convert_alpha()
+        elif randomStart == 300:
+            self.direction = "up"
+            self.surf = pygame.image.load(up_image).convert_alpha()
+        elif randomStart == 500:
+            self.direction = "down"
+            self.surf = pygame.image.load(down_image).convert_alpha()
+        else:
+            self.direction = "right"
+            self.surf = pygame.image.load(right_image).convert_alpha()
+
         self.rect = self.surf.get_rect(
             center=(
                 randomStart,
