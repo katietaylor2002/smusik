@@ -2,17 +2,20 @@ import spotipy.util as util
 import spotipy
 import json
 from types import SimpleNamespace
+
+from spotipy import SpotifyOAuth
+
 import pygame
 from player import Player
 from beat import Beat
 
 
 def start_beat_game():
-
     # Initialising screen size
     WIDTH = 800
     HEIGHT = 1000
-    beat_countdown = get_currently_listening()
+    # beat_countdown = get_currently_listening(search_for_song())
+    beat_countdown = 1
 
     # Set up game
     pygame.init()
@@ -121,11 +124,12 @@ def start_beat_game():
 def get_average_track_confidence():
     pass
 
+
 def confidence_threshold():
     return 0.5
 
 
-def get_currently_listening():
+def get_currently_listening(track_id):
     username = "katietaylor150"
     scope = "user-read-playback-state"
     redirect_uri = "http://localhost:8888/callback"
@@ -135,15 +139,38 @@ def get_currently_listening():
     token = util.prompt_for_user_token(username, scope, CLIENT_ID, CLIENT_SECRET, redirect_uri)
     sp = spotipy.Spotify(auth=token)
 
-    analysis = json.dumps(sp.audio_analysis('4ThaT2zAl53ah6uxOdWUMs'))
+    analysis = json.dumps(sp.audio_analysis(track_id))
 
     x = json.loads(analysis, object_hook=lambda d: SimpleNamespace(**d))
 
     return x.beats
 
 
+def search_for_song():
+    username = "katietaylor150"
+    scope = "user-modify-playback-state user-read-playback-state streaming"
+    redirect_uri = "http://localhost:8888/callback"
+    CLIENT_ID = 'f188b8fd96304f02934c23370541b5fd'
+    CLIENT_SECRET = 'afeb64fd90204bb29b63f3c7607a1924'
+
+    token = util.prompt_for_user_token(username, scope, CLIENT_ID, CLIENT_SECRET, redirect_uri)
+    sp = spotipy.Spotify(auth=token)
+
+    print("enter a song to play")
+    song = input()
+
+    search = sp.search(song, 5)
+
+    songs = []
+    for song in search["tracks"]["items"]:
+        print(song["name"] + " by " + song["artists"][0]["name"])
+        songs.append(song["uri"])
+
+    print("select song")
+    choice = input()
+
+    sp.start_playback(device_id="0057ca8aee472a46b91e4e78069b97b1e039095d", uris=songs, offset=choice)
 
 
 if __name__ == '__main__':
-    get_currently_listening()
-    start_beat_game()
+    search_for_song()
