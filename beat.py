@@ -5,7 +5,7 @@ import pygame
 
 
 class Beat(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, first_beat):
         super(Beat, self).__init__()
 
         up_image = str(Path.cwd() / "pygame" / "images" / "up.jpg")
@@ -35,7 +35,14 @@ class Beat(pygame.sprite.Sprite):
             )
         )
 
+        self.first_beat = first_beat
+
     def move(self):
         self.rect.move_ip(0, 1)
         if self.rect.top < 0:
             self.kill()
+
+    def trigger_playback(self):
+        if self.first_beat:
+            self.first_beat = False
+            return True
