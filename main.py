@@ -14,8 +14,7 @@ def start_beat_game():
     # Initialising screen size
     WIDTH = 800
     HEIGHT = 1000
-    # beat_countdown = get_currently_listening(search_for_song())
-    beat_countdown = 1
+    beat_countdown = get_currently_listening(search_for_song())
 
     # Set up game
     pygame.init()
@@ -169,8 +168,11 @@ def search_for_song():
     print("select song")
     choice = input()
 
-    sp.start_playback(device_id="0057ca8aee472a46b91e4e78069b97b1e039095d", uris=songs, offset=choice)
+    sp.start_playback(device_id="a74b6e7e6fcc6943ab70ebfc0b1c9031d6748c41", uris=songs, offset={"position": choice})
+
+    return songs[int(choice)]
 
 
 if __name__ == '__main__':
-    search_for_song()
+    start_beat_game()
+
