@@ -46,8 +46,7 @@ class SmusicGame:
         return x.beats
 
     def start_song_playback(self):
-        # device id is for web player - TODO remove hard coded id
-        self.sp.start_playback(device_id="4c4d7e7c5674a7fce12d254b488386d12f994612", uris=self.songs,
+        self.sp.start_playback(uris=self.songs,
                                offset={"position": self.song_choice})
         # note if playback doesn't work play a song manually first
 
@@ -56,7 +55,7 @@ class SmusicGame:
         WIDTH = 800
         HEIGHT = 1000
         beat_countdown = self.get_track_analysis()
-        self.start_song_playback()
+        self.sp.pause_playback()
 
         # Set up game
         pygame.init()
@@ -73,8 +72,6 @@ class SmusicGame:
 
         # Set up the player
         score = 0
-        player = Player()
-        player.update(pygame.mouse.get_pos())
 
         # Run until you get to an end condition
         running = True
@@ -83,6 +80,7 @@ class SmusicGame:
             for beat in beat_list:
                 beat.move()
                 if beat.trigger_playback():
+                    print("yes")
                     self.start_song_playback()
 
             # Did the user click the window close button?
@@ -132,18 +130,18 @@ class SmusicGame:
 
             # To render the screen, first fill the background with pink
             screen.fill((255, 170, 164))
+
+            # base line
             pygame.draw.line(screen, (255, 0, 0), (0, 700), (800, 700), 2)
-            pygame.draw.line(screen, (255, 0, 0), (100, 0), (100, 1000), 2)
-            pygame.draw.line(screen, (255, 0, 0), (300, 0), (300, 1000), 2)
-            pygame.draw.line(screen, (255, 0, 0), (500, 0), (500, 1000), 2)
-            pygame.draw.line(screen, (255, 0, 0), (700, 0), (700, 1000), 2)
+
+            # vertical lines
+            pygame.draw.line(screen, (255, 0, 0), (200, 0), (200, 1000), 2)
+            pygame.draw.line(screen, (255, 0, 0), (400, 0), (400, 1000), 2)
+            pygame.draw.line(screen, (255, 0, 0), (600, 0), (600, 1000), 2)
 
             # Draw the beats next
             for beat in beat_list:
                 screen.blit(beat.surf, beat.rect)
-
-            # Then draw the player
-            screen.blit(player.surf, player.rect)
 
             # Finally, draw the score at the bottom left
             score_font = pygame.font.SysFont("any_font", 36)
@@ -158,6 +156,8 @@ class SmusicGame:
 
         # Done! Print the final score
         print(f"Game over! Final score: {score}")
+
+        self.sp.pause_playback()
 
         # Make the mouse visible again
         pygame.mouse.set_visible(True)

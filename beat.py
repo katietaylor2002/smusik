@@ -8,10 +8,10 @@ class Beat(pygame.sprite.Sprite):
     def __init__(self, first_beat):
         super(Beat, self).__init__()
 
-        up_image = str(Path.cwd() / "pygame" / "images" / "up.jpg")
+        up_image = str(Path.cwd() / "pygame" / "images" / "up.png")
         down_image = str(Path.cwd() / "pygame" / "images" / "down.png")
-        left_image = str(Path.cwd() / "pygame" / "images" / "left.jpg")
-        right_image = str(Path.cwd() / "pygame" / "images" / "right.jpg")
+        left_image = str(Path.cwd() / "pygame" / "images" / "left.png")
+        right_image = str(Path.cwd() / "pygame" / "images" / "right.png")
 
         randomStart = random.choice([100, 300, 500, 700])
 
@@ -31,7 +31,7 @@ class Beat(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(
             center=(
                 randomStart,
-                150,
+                250,
             )
         )
 
@@ -43,6 +43,7 @@ class Beat(pygame.sprite.Sprite):
             self.kill()
 
     def trigger_playback(self):
-        if self.first_beat:
+        if self.first_beat and self.rect.top > 600:
             self.first_beat = False
             return True
+        return False
