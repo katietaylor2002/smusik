@@ -5,7 +5,7 @@ import pygame
 
 
 class Beat(pygame.sprite.Sprite):
-    def __init__(self, first_beat):
+    def __init__(self, first_beat, start, confidence):
         super(Beat, self).__init__()
 
         up_image = str(Path.cwd() / "pygame" / "images" / "up.png")
@@ -36,9 +36,11 @@ class Beat(pygame.sprite.Sprite):
         )
 
         self.first_beat = first_beat
+        self.start = start
+        self.confidence = confidence
 
     def move(self):
-        self.rect.move_ip(0, 1)
+        self.rect.move_ip(0, 3.5)
         if self.rect.top < 0:
             self.kill()
 
