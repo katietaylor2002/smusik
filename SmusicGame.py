@@ -1,6 +1,3 @@
-import time
-from timer import Timer
-
 import spotipy.util as util
 import spotipy
 import json
@@ -64,6 +61,7 @@ class SmusicGame:
         screen = pygame.display.set_mode(size=[WIDTH, HEIGHT])
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
+        start_ticks = pygame.time.get_ticks()
 
         # Set up the beat_list
         current_beat = 0
@@ -75,7 +73,6 @@ class SmusicGame:
 
         # Set up the player
         score = 0
-        t = Timer()
 
         # Run until you get to an end condition
         running = True
@@ -84,10 +81,7 @@ class SmusicGame:
             for beat in beat_list:
                 beat.move()
                 if beat.trigger_playback():
-                    print("yes")
                     self.start_song_playback()
-                    t.start()
-
 
             # Did the user click the window close button?
             for event in pygame.event.get():
@@ -97,42 +91,43 @@ class SmusicGame:
                     if event.key == pygame.K_LEFT:
                         for beat in beat_list:
                             if beat.direction == "left" and 600 < beat.rect.top < 700:
-                                print(beat.start + "at time" + t.stop)
+                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_UP:
                         for beat in beat_list:
                             if beat.direction == "up" and 600 < beat.rect.top < 700:
-                                print(beat.start + "at time" + time.time())
+                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_DOWN:
                         for beat in beat_list:
                             if beat.direction == "down" and 600 < beat.rect.top < 700:
-                                print(beat.start + "at time" + time.time())
+                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_RIGHT:
                         for beat in beat_list:
                             if beat.direction == "right" and 600 < beat.rect.top < 700:
-                                print(beat.start + "at time" + time.time())
+                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
+                                print(seconds)
                                 beat.kill()
                                 score += 10
                 elif event.type == ADD_BEAT:
-                    if beat_countdown[current_beat].confidence < 0:
-                        current_beat += 1
-                    else:
-                        # Create a new beat
-                        new_beat = Beat(first_beat=False, start=beat_countdown[current_beat].start,
-                                        confidence=beat_countdown[current_beat].confidence)
-                        beat_list.add(new_beat)
+                    # Create a new beat
+                    new_beat = Beat(first_beat=False, start=beat_countdown[current_beat].start,
+                                    confidence=beat_countdown[current_beat].confidence)
+                    beat_list.add(new_beat)
 
-                        # Stop the previous timer by setting the interval to 0
-                        pygame.time.set_timer(ADD_BEAT, 0)
+                    # Stop the previous timer by setting the interval to 0
+                    pygame.time.set_timer(ADD_BEAT, 0)
 
-                        # Start a new timer
-                        current_beat += 1
-                        pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
+                    # Start a new timer
+                    current_beat += 1
+                    pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
 
             # To render the screen, first fill the background with pink
             screen.fill((255, 170, 164))

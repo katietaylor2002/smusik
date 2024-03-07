@@ -31,7 +31,7 @@ class Beat(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(
             center=(
                 randomStart,
-                250,
+                100,
             )
         )
 
@@ -40,7 +40,7 @@ class Beat(pygame.sprite.Sprite):
         self.confidence = confidence
 
     def move(self):
-        self.rect.move_ip(0, 3.5)
+        self.rect.move_ip(0, 15)
         if self.rect.top < 0:
             self.kill()
 
