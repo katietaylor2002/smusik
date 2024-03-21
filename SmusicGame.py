@@ -1,61 +1,17 @@
-import spotipy.util as util
-import spotipy
-import json
-from types import SimpleNamespace
-
 import pygame
 from beat import Beat
 
 
 class SmusicGame:
-    def __init__(self):
-        self.sp = self.create_spotify_connection()
-        self.songs = self.search_for_song()
-        self.song_choice = self.get_song_choice()
-
-    @staticmethod
-    def create_spotify_connection():
-        username = "katietaylor150"
-        scope = "user-modify-playback-state user-read-playback-state streaming"
-        redirect_uri = "http://localhost:8888/callback"
-        CLIENT_ID = 'f188b8fd96304f02934c23370541b5fd'
-        CLIENT_SECRET = 'afeb64fd90204bb29b63f3c7607a1924'
-
-        token = util.prompt_for_user_token(username, scope, CLIENT_ID, CLIENT_SECRET, redirect_uri)
-        return spotipy.Spotify(auth=token)
-
-    @staticmethod
-    def get_song_choice():
-        print("select song")
-        return int(input())
-
-    def search_for_song(self):
-        print("enter a song to play")
-        song = input()
-        search = self.sp.search(song, 5)
-        songs = []
-        for song in search["tracks"]["items"]:
-            print(song["name"] + " by " + song["artists"][0]["name"])
-            songs.append(song["uri"])
-        return songs
-
-    def get_track_analysis(self):
-        analysis = json.dumps(self.sp.audio_analysis(self.songs[self.song_choice]))
-        x = json.loads(analysis, object_hook=lambda d: SimpleNamespace(**d))
-        return x.beats
-
-    def start_song_playback(self):
-        self.sp.start_playback(uris=self.songs,
-                               offset={"position": self.song_choice})
-        # note if playback doesn't work play a song manually first
+    def __init__(self, track_analysis, sp):
+        self.track_analysis = track_analysis
+        self.sp = sp
 
     def start_beat_game(self):
         # Initialising screen size
         WIDTH = 800
         HEIGHT = 1000
-        beat_countdown = self.get_track_analysis()
-        self.sp.pause_playback()
-
+        beat_countdown = self.track_analysis
         # Set up game
         pygame.init()
         screen = pygame.display.set_mode(size=[WIDTH, HEIGHT])
@@ -81,7 +37,7 @@ class SmusicGame:
             for beat in beat_list:
                 beat.move()
                 if beat.trigger_playback():
-                    self.start_song_playback()
+                    self.sp.start_song_playback()
 
             # Did the user click the window close button?
             for event in pygame.event.get():
