@@ -1,11 +1,20 @@
+import json
+from types import SimpleNamespace
+
 import pygame
 from beat import Beat
 
 
 class SmusicGame:
-    def __init__(self, track_analysis, sp):
-        self.track_analysis = track_analysis
+    def __init__(self, song, sp):
+        self.song = song
         self.sp = sp
+        self.track_analysis = self.get_track_analysis(song)
+
+    def get_track_analysis(self, song):
+        analysis = json.dumps(self.sp.audio_analysis(song))
+        x = json.loads(analysis, object_hook=lambda d: SimpleNamespace(**d))
+        return x.beats
 
     def start_beat_game(self):
         # Initialising screen size
@@ -17,7 +26,6 @@ class SmusicGame:
         screen = pygame.display.set_mode(size=[WIDTH, HEIGHT])
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
-        start_ticks = pygame.time.get_ticks()
 
         # Set up the beat_list
         current_beat = 0
@@ -37,7 +45,7 @@ class SmusicGame:
             for beat in beat_list:
                 beat.move()
                 if beat.trigger_playback():
-                    self.sp.start_song_playback()
+                    self.sp.start_playback(uris=[self.song])
 
             # Did the user click the window close button?
             for event in pygame.event.get():
@@ -47,29 +55,21 @@ class SmusicGame:
                     if event.key == pygame.K_LEFT:
                         for beat in beat_list:
                             if beat.direction == "left" and 600 < beat.rect.top < 700:
-                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_UP:
                         for beat in beat_list:
                             if beat.direction == "up" and 600 < beat.rect.top < 700:
-                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_DOWN:
                         for beat in beat_list:
                             if beat.direction == "down" and 600 < beat.rect.top < 700:
-                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-                                print(seconds)
                                 beat.kill()
                                 score += 10
                     elif event.key == pygame.K_RIGHT:
                         for beat in beat_list:
                             if beat.direction == "right" and 600 < beat.rect.top < 700:
-                                seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-                                print(seconds)
                                 beat.kill()
                                 score += 10
                 elif event.type == ADD_BEAT:
