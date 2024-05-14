@@ -27,66 +27,32 @@ class Search:
         token = util.prompt_for_user_token(username, scope, CLIENT_ID, CLIENT_SECRET, redirect_uri)
         return spotipy.Spotify(auth=token)
 
+    def create_song_button(self, window, song_number, search_results):
+        current_song = search_results["tracks"]["items"][song_number]
+
+        with urllib.request.urlopen(current_song["album"]["images"][0]["url"]) as u:
+            raw_data = u.read()
+
+        image = customtkinter.CTkImage(light_image=Image.open(io.BytesIO(raw_data)),
+                                       dark_image=Image.open(io.BytesIO(raw_data)),
+                                       size=(180, 180))
+
+        button = customtkinter.CTkButton(window, text=current_song["name"].strip() + " by " + current_song["artists"][0]["name"].strip(),
+                                         font=("Impact", 40),
+                                         image=image,
+                                         height=50,
+                                         width=700,
+                                         anchor='w',
+                                         command=lambda: self.start_game(current_song["uri"], window))
+
+        button._text_label.configure(wraplength=500)
+        button.pack(pady=30)
+
     def search_for_song(self, search_textbox, window):
         song = search_textbox.get("1.0", "end-1c")
-        search = self.sp.search(song, 5)
-
-        with urllib.request.urlopen(search["tracks"]["items"][0]["album"]["images"][0]["url"]) as u:
-            raw_data = u.read()
-
-        my_image = customtkinter.CTkImage(light_image=Image.open(io.BytesIO(raw_data)),
-                                          dark_image=Image.open(io.BytesIO(raw_data)),
-                                          size=(180, 180))  # WidthxHeight
-
-        image_1 = customtkinter.CTkLabel(window, text="", image=my_image)
-
-        song_button_1 = customtkinter.CTkButton(window, text=search["tracks"]["items"][0]["name"] + " by " +
-                                                             search["tracks"]["items"][0]["artists"][0]["name"],
-                                                font=("Impact", 30),
-                                                height=50,
-                                                command=lambda: self.start_game(search["tracks"]["items"][0]["uri"],
-                                                                                window))
-
-        image_1.grid(row=3, column=1, columnspan=3, pady=40, sticky="EW")
-        song_button_1.grid(row=3, column=2, columnspan=3, sticky="EW")
-
-        with urllib.request.urlopen(search["tracks"]["items"][1]["album"]["images"][0]["url"]) as u:
-            raw_data = u.read()
-
-        my_image = customtkinter.CTkImage(light_image=Image.open(io.BytesIO(raw_data)),
-                                          dark_image=Image.open(io.BytesIO(raw_data)),
-                                          size=(180, 180))  # WidthxHeight
-
-        image_2 = customtkinter.CTkLabel(window, text="", image=my_image)
-
-        song_button_2 = customtkinter.CTkButton(window, text=search["tracks"]["items"][1]["name"] + " by " +
-                                                             search["tracks"]["items"][1]["artists"][0]["name"],
-                                                font=("Impact", 30),
-                                                height=50,
-                                                command=lambda: self.start_game(search["tracks"]["items"][1]["uri"],
-                                                                                window))
-
-        image_2.grid(row=4, column=1, columnspan=3, pady=40, sticky="EW")
-        song_button_2.grid(row=4, column=2, columnspan=3, sticky="EW")
-
-        with urllib.request.urlopen(search["tracks"]["items"][2]["album"]["images"][0]["url"]) as u:
-            raw_data = u.read()
-
-        my_image = customtkinter.CTkImage(light_image=Image.open(io.BytesIO(raw_data)),
-                                          dark_image=Image.open(io.BytesIO(raw_data)),
-                                          size=(180, 180))  # WidthxHeight
-
-        image_3 = customtkinter.CTkLabel(window, text="", image=my_image)
-
-        song_button_3 = customtkinter.CTkButton(window, text=search["tracks"]["items"][2]["name"] + " by " +
-                                                             search["tracks"]["items"][2]["artists"][0]["name"],
-                                                font=("Impact", 30),
-                                                height=50,
-                                                command=lambda: self.start_game(search["tracks"]["items"][2]["uri"],
-                                                                                window))
-
-        image_3.grid(row=5, column=1, columnspan=3, pady=40, sticky="EW")
-        song_button_3.grid(row=5, column=2, columnspan=3, sticky="EW")
+        search = self.sp.search(song, 3)
+        for i in range(0, 3):
+            self.create_song_button(window, i, search)
 
     def start_game(self, song, window):
         window.destroy()
@@ -98,14 +64,22 @@ class Search:
         customtkinter.set_default_color_theme("green")
         window = customtkinter.CTk()
         window.geometry("800x1000")
+        window.title("smusic")
 
-        heading = customtkinter.CTkLabel(window, text="SMUSIC", font=("Impact", 40))
+        my_image = customtkinter.CTkImage(light_image=Image.open("pygame/images/logo.png"),
+                                          dark_image=Image.open("pygame/images/logo.png"),
+                                          size=(238, 116))
+
+        heading = customtkinter.CTkLabel(window, text="", image=my_image)
         search_textbox = customtkinter.CTkTextbox(window, height=50, width=400, font=("Impact", 40))
-        search_button = customtkinter.CTkButton(window, text="search", font=("Impact", 30),
-                                                command=lambda: self.search_for_song(search_textbox, window))
+        search_button = customtkinter.CTkButton(window, text="search", font=("Impact", 40),
+                                                command=lambda: [self.search_for_song(search_textbox, window),
+                                                                 search_button.destroy(),
+                                                                 search_textbox.configure(state="disabled"),
+                                                                 ])
 
-        heading.grid(row=0, column=3, padx=200, pady=20)
-        search_textbox.grid(row=1, column=3, padx=200, pady=5)
-        search_button.grid(row=2, column=3, padx=200, pady=5)
+        heading.pack(pady=10)
+        search_textbox.pack(pady=10)
+        search_button.pack(pady=10)
 
         window.mainloop()
