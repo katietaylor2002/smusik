@@ -2,6 +2,8 @@ from pathlib import Path
 import random
 
 import pygame
+from directions import Direction
+from text import Text
 
 
 class Beat(pygame.sprite.Sprite):
@@ -13,19 +15,23 @@ class Beat(pygame.sprite.Sprite):
         left_image = str(Path.cwd() / "pygame" / "images" / "greenleft.png")
         right_image = str(Path.cwd() / "pygame" / "images" / "greenright.png")
 
-        randomStart = random.choice([100, 300, 500, 700])
+        randomStart = random.choice([Direction.LEFT.value, Direction.UP.value,
+                                     Direction.DOWN.value, Direction.RIGHT.value])
 
-        if randomStart == 100:
-            self.direction = "left"
+        if randomStart == Direction.LEFT.value:
+            self.direction = Direction.LEFT
             self.surf = pygame.image.load(left_image).convert_alpha()
-        elif randomStart == 300:
-            self.direction = "up"
+
+        elif randomStart == Direction.UP.value:
+            self.direction = Direction.UP
             self.surf = pygame.image.load(up_image).convert_alpha()
-        elif randomStart == 500:
-            self.direction = "down"
+
+        elif randomStart == Direction.DOWN.value:
+            self.direction = Direction.DOWN
             self.surf = pygame.image.load(down_image).convert_alpha()
+
         else:
-            self.direction = "right"
+            self.direction = Direction.RIGHT
             self.surf = pygame.image.load(right_image).convert_alpha()
 
         self.rect = self.surf.get_rect(
