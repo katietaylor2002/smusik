@@ -8,10 +8,10 @@ class Beat(pygame.sprite.Sprite):
     def __init__(self, first_beat, start, confidence):
         super(Beat, self).__init__()
 
-        up_image = str(Path.cwd() / "pygame" / "images" / "up.png")
-        down_image = str(Path.cwd() / "pygame" / "images" / "down.png")
-        left_image = str(Path.cwd() / "pygame" / "images" / "left.png")
-        right_image = str(Path.cwd() / "pygame" / "images" / "right.png")
+        up_image = str(Path.cwd() / "pygame" / "images" / "greenup.png")
+        down_image = str(Path.cwd() / "pygame" / "images" / "greendown.png")
+        left_image = str(Path.cwd() / "pygame" / "images" / "greenleft.png")
+        right_image = str(Path.cwd() / "pygame" / "images" / "greenright.png")
 
         randomStart = random.choice([100, 300, 500, 700])
 
@@ -40,7 +40,7 @@ class Beat(pygame.sprite.Sprite):
         self.confidence = confidence
 
     def move(self):
-        self.rect.move_ip(0, 10)
+        self.rect.move_ip(0, 9)
         if self.rect.top < 0:
             self.kill()
 

@@ -85,16 +85,16 @@ class SmusicGame:
                     current_beat += 1
                     pygame.time.set_timer(ADD_BEAT, int(beat_countdown[current_beat].duration * 1000))
 
-            # To render the screen, first fill the background with pink
-            screen.fill((255, 170, 164))
+            # To render the screen, first fill the background
+            screen.fill((36, 36, 36))
 
             # base line
-            pygame.draw.line(screen, (255, 0, 0), (0, 700), (800, 700), 2)
+            pygame.draw.line(screen, (47, 165, 114), (0, 700), (800, 700), 5)
 
             # vertical lines
-            pygame.draw.line(screen, (255, 0, 0), (200, 0), (200, 1000), 2)
-            pygame.draw.line(screen, (255, 0, 0), (400, 0), (400, 1000), 2)
-            pygame.draw.line(screen, (255, 0, 0), (600, 0), (600, 1000), 2)
+            pygame.draw.line(screen, (47, 165, 114), (200, 0), (200, 1000), 2)
+            pygame.draw.line(screen, (47, 165, 114), (400, 0), (400, 1000), 2)
+            pygame.draw.line(screen, (47, 165, 114), (600, 0), (600, 1000), 2)
 
             # Draw the beats next
             for beat in beat_list:
@@ -102,7 +102,7 @@ class SmusicGame:
 
             # Finally, draw the score at the bottom left
             score_font = pygame.font.SysFont("any_font", 36)
-            score_block = score_font.render(f"Score: {score}", False, (0, 0, 0))
+            score_block = score_font.render(f"Score: {score}", False, (47, 165, 114))
             screen.blit(score_block, (50, HEIGHT - 50))
 
             # Flip the display to make everything appear
