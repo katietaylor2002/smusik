@@ -1,8 +1,11 @@
 import json
 from types import SimpleNamespace
 
+from pygame.sprite import Group
+
 import pygame
 from beat import Beat
+from text import Text
 
 
 class SmusicGame:
@@ -37,6 +40,8 @@ class SmusicGame:
 
         # Set up the player
         score = 0
+        texts = Group()
+        font = pygame.font.Font(None, 30)
 
         # Run until you get to an end condition
         running = True
@@ -54,24 +59,38 @@ class SmusicGame:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         for beat in beat_list:
-                            if beat.direction == "left" and 600 < beat.rect.top < 700:
+                            if beat.direction == "left" and 625 < beat.rect.top < 675:
                                 beat.kill()
                                 score += 10
+                                texts.add(Text(font, "Great!", 'white', 2000, 100))
+                            elif beat.direction == "left" and 550 < beat.rect.top < 750:
+                                beat.kill()
+                                score += 5
+                                texts.add(Text(font, "Okay", 'white', 2000, 100))
                     elif event.key == pygame.K_UP:
                         for beat in beat_list:
-                            if beat.direction == "up" and 600 < beat.rect.top < 700:
+                            if beat.direction == "up" and 625 < beat.rect.top < 675:
                                 beat.kill()
                                 score += 10
+                            elif beat.direction == "up" and 550 < beat.rect.top < 750:
+                                beat.kill()
+                                score += 5
                     elif event.key == pygame.K_DOWN:
                         for beat in beat_list:
-                            if beat.direction == "down" and 600 < beat.rect.top < 700:
+                            if beat.direction == "down" and 625 < beat.rect.top < 675:
                                 beat.kill()
                                 score += 10
+                            elif beat.direction == "down" and 550 < beat.rect.top < 750:
+                                beat.kill()
+                                score += 5
                     elif event.key == pygame.K_RIGHT:
                         for beat in beat_list:
-                            if beat.direction == "right" and 600 < beat.rect.top < 700:
+                            if beat.direction == "right" and 625 < beat.rect.top < 675:
                                 beat.kill()
                                 score += 10
+                            elif beat.direction == "right" and 550 < beat.rect.top < 750:
+                                beat.kill()
+                                score += 5
                 elif event.type == ADD_BEAT:
                     # Create a new beat
                     new_beat = Beat(first_beat=False, start=beat_countdown[current_beat].start,
@@ -88,8 +107,14 @@ class SmusicGame:
             # To render the screen, first fill the background
             screen.fill((36, 36, 36))
 
-            # base line
-            pygame.draw.line(screen, (47, 165, 114), (0, 700), (800, 700), 5)
+            # Light green 47, 165, 114
+            # Dark green 16, 106, 67
+            # Black 36, 36, 36
+
+            # base lines
+            pygame.draw.line(screen, (16, 106, 67), (0, 700), (800, 700), 15)
+            pygame.draw.line(screen, (47, 165, 114), (0, 600), (800, 600), 2)
+            pygame.draw.line(screen, (47, 165, 114), (0, 800), (800, 800), 2)
 
             # vertical lines
             pygame.draw.line(screen, (47, 165, 114), (200, 0), (200, 1000), 2)
@@ -104,6 +129,10 @@ class SmusicGame:
             score_font = pygame.font.SysFont("any_font", 36)
             score_block = score_font.render(f"Score: {score}", False, (47, 165, 114))
             screen.blit(score_block, (50, HEIGHT - 50))
+
+            ticks = pygame.time.get_ticks()
+            texts.update(ticks)
+            texts.draw(screen)
 
             # Flip the display to make everything appear
             pygame.display.flip()

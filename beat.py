@@ -40,7 +40,7 @@ class Beat(pygame.sprite.Sprite):
         self.confidence = confidence
 
     def move(self):
-        self.rect.move_ip(0, 9)
+        self.rect.move_ip(0, 12)
         if self.rect.top < 0:
             self.kill()
 
