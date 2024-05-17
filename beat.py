@@ -1,12 +1,13 @@
 from pathlib import Path
 import random
 
+from pygame.sprite import Sprite
+
 import pygame
 from directions import Direction
-from text import Text
 
 
-class Beat(pygame.sprite.Sprite):
+class Beat(Sprite):
     def __init__(self, first_beat, start, confidence):
         super(Beat, self).__init__()
 
@@ -18,21 +19,22 @@ class Beat(pygame.sprite.Sprite):
         randomStart = random.choice([Direction.LEFT.value, Direction.UP.value,
                                      Direction.DOWN.value, Direction.RIGHT.value])
 
-        if randomStart == Direction.LEFT.value:
-            self.direction = Direction.LEFT
-            self.surf = pygame.image.load(left_image).convert_alpha()
+        match randomStart:
+            case Direction.LEFT.value:
+                self.direction = Direction.LEFT
+                self.surf = pygame.image.load(left_image).convert_alpha()
 
-        elif randomStart == Direction.UP.value:
-            self.direction = Direction.UP
-            self.surf = pygame.image.load(up_image).convert_alpha()
+            case Direction.UP.value:
+                self.direction = Direction.UP
+                self.surf = pygame.image.load(up_image).convert_alpha()
 
-        elif randomStart == Direction.DOWN.value:
-            self.direction = Direction.DOWN
-            self.surf = pygame.image.load(down_image).convert_alpha()
+            case Direction.DOWN.value:
+                self.direction = Direction.DOWN
+                self.surf = pygame.image.load(down_image).convert_alpha()
 
-        else:
-            self.direction = Direction.RIGHT
-            self.surf = pygame.image.load(right_image).convert_alpha()
+            case Direction.RIGHT.value:
+                self.direction = Direction.RIGHT
+                self.surf = pygame.image.load(right_image).convert_alpha()
 
         self.rect = self.surf.get_rect(
             center=(
@@ -45,10 +47,9 @@ class Beat(pygame.sprite.Sprite):
         self.start = start
         self.confidence = confidence
 
-    def move(self):
+    def move_and_get_location(self):
         self.rect.move_ip(0, 12)
-        if self.rect.top < 0:
-            self.kill()
+        return self.rect.top
 
     def trigger_playback(self):
         if self.first_beat and self.rect.top > 600:

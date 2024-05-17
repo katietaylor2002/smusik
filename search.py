@@ -7,7 +7,7 @@ from PIL import Image
 import spotipy.util as util
 import spotipy
 
-from SmusicGame import SmusicGame
+from game import Game
 
 
 class Search:
@@ -56,8 +56,7 @@ class Search:
 
     def start_game(self, song, window):
         window.destroy()
-        new_game = SmusicGame(song, self.sp)
-        new_game.start_beat_game()
+        Game(song, self.sp)
 
     def search_screen(self):
         customtkinter.set_appearance_mode("dark")
