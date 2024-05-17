@@ -42,11 +42,13 @@ class Game:
                 beat.kill()
                 self.score += 10
                 self.add_text_to_screen(text_location, Messages.GREAT)
+                break
 
             elif beat.direction == direction and 550 < beat.rect.top < 750:
                 beat.kill()
                 self.score += 5
                 self.add_text_to_screen(text_location, Messages.OKAY)
+                break
 
     def start_beat_game(self):
         WIDTH = 800
@@ -78,6 +80,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.process_input(Direction.LEFT)
