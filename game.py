@@ -7,6 +7,7 @@ import pygame
 from beat import Beat
 from directions import Direction
 from messages import Messages
+from scoreboard import ScoreBoard
 from text import Text
 
 
@@ -17,6 +18,9 @@ class Game:
         self.song = song
         self.sp = sp
         self.score = 0
+        self.misses = 0
+        self.okays = 0
+        self.greats = 0
         self.texts = Group()
         self.beat_list = Group()
 
@@ -41,14 +45,21 @@ class Game:
             if beat.direction == direction and 625 < beat.rect.top < 675:
                 beat.kill()
                 self.score += 10
+                self.greats += 1
                 self.add_text_to_screen(text_location, Messages.GREAT)
                 break
 
             elif beat.direction == direction and 550 < beat.rect.top < 750:
                 beat.kill()
                 self.score += 5
+                self.okays += 1
                 self.add_text_to_screen(text_location, Messages.OKAY)
                 break
+
+            else:
+                self.score -= 5
+                self.misses += 1
+                self.add_text_to_screen(text_location, Messages.MISS)
 
     def start_beat_game(self):
         WIDTH = 800
@@ -74,6 +85,7 @@ class Game:
                 if beat.move_and_get_location() > 800:
                     beat.kill()
                     self.score -= 5
+                    self.misses += 1
                     self.add_text_to_screen(beat.direction.value-45, Messages.MISS)
                     break
 
@@ -131,3 +143,4 @@ class Game:
         pygame.mouse.set_visible(True)
 
         pygame.quit()
+        ScoreBoard(self.score, self.greats, self.okays, self.misses)
