@@ -94,7 +94,9 @@ class Game:
                     running = False
 
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                    elif event.key == pygame.K_LEFT:
                         self.process_input(Direction.LEFT)
                     elif event.key == pygame.K_UP:
                         self.process_input(Direction.UP)
