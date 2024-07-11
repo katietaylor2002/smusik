@@ -1,4 +1,5 @@
 import io
+import tkinter
 import urllib.request
 from tkinter import *
 import customtkinter
@@ -7,6 +8,7 @@ from PIL import Image
 import spotipy.util as util
 import spotipy
 
+from difficulty import Difficulty
 from game import Game
 
 
@@ -14,6 +16,7 @@ class Search:
 
     def __init__(self):
         self.sp = self.create_spotify_connection()
+        self.mode = 0
         self.search_screen()
 
     @staticmethod
@@ -37,7 +40,9 @@ class Search:
                                        dark_image=Image.open(io.BytesIO(raw_data)),
                                        size=(180, 180))
 
-        button = customtkinter.CTkButton(window, text=current_song["name"].strip() + " by " + current_song["artists"][0]["name"].strip(),
+        button = customtkinter.CTkButton(window,
+                                         text=current_song["name"].strip() + " by " + current_song["artists"][0][
+                                             "name"].strip(),
                                          font=("Impact", 40),
                                          image=image,
                                          height=50,
@@ -56,7 +61,9 @@ class Search:
 
     def start_game(self, song, window):
         window.destroy()
-        Game(song, self.sp)
+        if self.mode == 2:
+            song = "spotify:track:6ddQ5KCkvCggk3j6KdA0zL"
+        Game(song, self.sp, self.mode)
 
     def search_screen(self):
         customtkinter.set_appearance_mode("dark")
@@ -69,16 +76,43 @@ class Search:
                                           dark_image=Image.open("pygame/images/logo.png"),
                                           size=(238, 116))
 
+        radio_var = tkinter.IntVar(window, 0)
+
+        def radiobutton_event():
+            self.mode = radio_var.get()
+
+        radiobutton_1 = customtkinter.CTkRadioButton(window,
+                                                     font=("Impact", 40),
+                                                     text="normal",
+                                                     command=radiobutton_event, variable=radio_var,
+                                                     value=Difficulty.NORMAL.value)
+        radiobutton_2 = customtkinter.CTkRadioButton(window,
+                                                     font=("Impact", 40),
+                                                     text="hard",
+                                                     command=radiobutton_event, variable=radio_var,
+                                                     value=Difficulty.HARD.value)
+        radiobutton_3 = customtkinter.CTkRadioButton(window,
+                                                     font=("Impact", 40),
+                                                     text="bonkers",
+                                                     command=radiobutton_event, variable=radio_var,
+                                                     value=Difficulty.BONKERS.value)
+
         heading = customtkinter.CTkLabel(window, text="", image=my_image)
         search_textbox = customtkinter.CTkTextbox(window, height=50, width=400, font=("Impact", 40))
         search_button = customtkinter.CTkButton(window, text="search", font=("Impact", 40),
                                                 command=lambda: [self.search_for_song(search_textbox, window),
                                                                  search_button.destroy(),
+                                                                 radiobutton_1.destroy(),
+                                                                 radiobutton_2.destroy(),
+                                                                 radiobutton_3.destroy(),
                                                                  search_textbox.configure(state="disabled"),
                                                                  ])
 
         heading.pack(pady=10)
         search_textbox.pack(pady=10)
+        radiobutton_1.pack(padx=20, pady=10)
+        radiobutton_2.pack(padx=20, pady=10)
+        radiobutton_3.pack(padx=20, pady=10)
         search_button.pack(pady=10)
 
         window.mainloop()

@@ -12,7 +12,7 @@ from text import Text
 
 
 class Game:
-    def __init__(self, song, sp):
+    def __init__(self, song, sp, mode):
         pygame.init()
 
         self.song = song
@@ -23,6 +23,7 @@ class Game:
         self.greats = 0
         self.texts = Group()
         self.beat_list = Group()
+        self.mode = mode
 
         self.track_analysis = self.get_track_analysis(song)
         self.start_beat_game()
@@ -61,6 +62,22 @@ class Game:
                 self.misses += 1
                 self.add_text_to_screen(text_location, Messages.MISS)
 
+    def get_confidence(self):
+        if self.mode == 0:
+            return 0.4
+        elif self.mode == 1:
+            return 0.3
+        else:
+            return 0
+
+    def get_speed(self):
+        if self.mode == 0:
+            return 12
+        elif self.mode == 1:
+            return 15
+        else:
+            return 18
+
     def start_beat_game(self):
         WIDTH = 800
         HEIGHT = 1000
@@ -71,7 +88,7 @@ class Game:
 
         current_beat = 0
         ADD_BEAT = pygame.USEREVENT + 1
-        first_beat = Beat(first_beat=True, start=0, confidence=1)
+        first_beat = Beat(first_beat=True, start=0, speed=self.get_speed())
         self.beat_list.add(first_beat)
         pygame.time.set_timer(ADD_BEAT, int(self.track_analysis[current_beat].duration * 1000))
 
@@ -106,9 +123,10 @@ class Game:
                         self.process_input(Direction.RIGHT)
 
                 elif event.type == ADD_BEAT:
-                    new_beat = Beat(first_beat=False, start=self.track_analysis[current_beat].start,
-                                    confidence=self.track_analysis[current_beat].confidence)
-                    self.beat_list.add(new_beat)
+                    if self.track_analysis[current_beat].confidence >= self.get_confidence():
+                        new_beat = Beat(first_beat=False, start=self.track_analysis[current_beat].start,
+                                        speed=self.get_speed())
+                        self.beat_list.add(new_beat)
                     pygame.time.set_timer(ADD_BEAT, 0)
                     current_beat += 1
                     pygame.time.set_timer(ADD_BEAT, int(self.track_analysis[current_beat].duration * 1000))

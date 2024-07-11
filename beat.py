@@ -8,7 +8,7 @@ from directions import Direction
 
 
 class Beat(Sprite):
-    def __init__(self, first_beat, start, confidence):
+    def __init__(self, first_beat, start, speed):
         super(Beat, self).__init__()
 
         up_image = str(Path.cwd() / "pygame" / "images" / "greenup.png")
@@ -45,10 +45,10 @@ class Beat(Sprite):
 
         self.first_beat = first_beat
         self.start = start
-        self.confidence = confidence
+        self.speed = speed
 
     def move_and_get_location(self):
-        self.rect.move_ip(0, 12)
+        self.rect.move_ip(0, self.speed)
         return self.rect.top
 
     def trigger_playback(self):
