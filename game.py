@@ -82,6 +82,7 @@ class Game:
         WIDTH = 800
         HEIGHT = 1000
 
+        bg = pygame.image.load("when-dizzie.jpg")
         screen = pygame.display.set_mode(size=[WIDTH, HEIGHT])
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
@@ -132,7 +133,10 @@ class Game:
                     pygame.time.set_timer(ADD_BEAT, int(self.track_analysis[current_beat].duration * 1000))
 
             # To render the screen, first fill the background
-            screen.fill((36, 36, 36))
+            if self.mode == 2:
+                screen.blit(bg, (0, 0))
+            else:
+                screen.fill((36, 36, 36))
 
             pygame.draw.line(screen, (16, 106, 67), (0, 700), (800, 700), 15)
             pygame.draw.line(screen, (47, 165, 114), (0, 600), (800, 600), 2)
